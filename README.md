@@ -8,3 +8,9 @@ host.txt        # contains your MQTT host ip or hostname
 *private.key    # service private key
 *rootCA.pem     # root CA certificate
 ```
+
+## Services used
+- AWS EC2
+- AWS DynamoDB
+- AWS IoT
+- AWS S3
