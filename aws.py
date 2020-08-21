@@ -2,6 +2,7 @@ from AWSIoTPythonSDK.MQTTLib import AWSIoTMQTTClient
 import sys
 import boto3
 import configparser
+from boto3.dynamodb.conditions import Key, Attr
 
 
 def customCallback(client, userdata, message):
@@ -42,6 +43,7 @@ class awsMQTT:
 
 class awsBoto3:
     def __init__(self):
+
         # initialize credentials and connection
         credentialFilePath = "credentials/.aws/credentials"
         self.AWSconfig = configparser.ConfigParser()
@@ -53,6 +55,7 @@ class awsBoto3:
         self.session = boto3.Session(
             aws_access_key_id=self.AWSconfig["default"]["aws_access_key_id"],
             aws_secret_access_key=self.AWSconfig["default"]["aws_secret_access_key"],
+            aws_session_token=self.AWSconfig["default"]["aws_session_token"],
         )
 
 
@@ -61,3 +64,22 @@ if __name__ == "__main__":
     awsBoto3 = awsBoto3()
     print(awsBoto3.AWSconfig["default"]["aws_access_key_id"])
     print(awsBoto3.AWSconfig["default"]["aws_secret_access_key"])
+    print(awsBoto3.AWSconfig["default"]["aws_session_token"])
+    table_name = "test"
+    index_name = "test"
+
+    dynamodb = awsBoto3.session.resource("dynamodb", "us-east-1")
+    table = dynamodb.Table(table_name)
+    response = table.query(
+        # KeyConditionExpression=Key('bookingid').eq('0.0'),
+        # Add the name of the index you want to use in your query.
+        IndexName=index_name,
+        KeyConditionExpression=Key("bookingid").eq("0.0"),
+        ScanIndexForward=False,
+        Limit=10,
+    )
+
+    items = response["Items"]
+    n = 10  # limit to last 10 items
+    data = items[:n]
+    data_reversed = data[::-1]
