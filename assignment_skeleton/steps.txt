@@ -1,0 +1,9 @@
+1) Create a DynamoDB table with partition as id (String)
+2) Create 1 secondary index on this table
+call it "bookingid-datetime_value-index"
+make bookingid as partition key
+make datetime_value as sort key
+3) Modify dynamodb.py file to your own DynamoDB table
+4) Change the DynamoDB rules if necessary to point to the right table and also create IOT rule ROLE to cater for this new table
+
+	
