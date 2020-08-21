@@ -23,7 +23,7 @@ class awsMQTT:
         self.privateKeyPath = "credentials/private.pem.key"
 
         self.MQTTClient = AWSIoTMQTTClient("uniquePlaceholder")
-        self.MQTTClient.configureEndpoint(self.host, 3)
+        self.MQTTClient.configureEndpoint(self.host, 8883)
         self.MQTTClient.configureCredentials(
             self.rootCAPath, self.privateKeyPath, self.certificatePath
         )

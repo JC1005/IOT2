@@ -71,8 +71,8 @@ if __name__ == "__main__":
 
         mygcc = GrabCarClient(host, port)
         aws = awsMQTT()
-        with open("credentials/host.txt", "r") as f:
-            host = f.read()
+
+        host = "a360v5qyx1qhmx-ats.iot.us-east-1.amazonaws.com"
         rootCAPath = "credentials/rootca.pem"
         certificatePath = "credentials/certificate.pem.crt"
         privateKeyPath = "credentials/private.pem.key"
