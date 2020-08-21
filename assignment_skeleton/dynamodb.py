@@ -9,7 +9,7 @@ def get_data_from_dynamodb():
             import boto3
             from boto3.dynamodb.conditions import Key, Attr
 
-            table_name = 'test2'
+            table_name = 'iotassign2'
             print(f"Querying table {table_name}")
             dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
             table = dynamodb.Table(table_name)
