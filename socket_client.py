@@ -71,11 +71,11 @@ if __name__ == "__main__":
 
         mygcc = GrabCarClient(host, port)
         aws = awsMQTT()
-
-        host = aws.host
-        rootCAPath = aws.rootCAPath
-        certificatePath = aws.certificatePath
-        privateKeyPath = aws.privateKeyPath
+        with open("credentials/host.txt", "r") as f:
+            host = f.read()
+        rootCAPath = "credentials/rootca.pem"
+        certificatePath = "credentials/certificate.pem.crt"
+        privateKeyPath = "credentials/private.pem.key"
 
         my_rpi = AWSIoTMQTTClient("basicPubSub")
         my_rpi.configureEndpoint(host, 8883)
