@@ -1,5 +1,7 @@
 from AWSIoTPythonSDK.MQTTLib import AWSIoTMQTTClient
 import sys
+import boto3
+import configparser
 
 
 def customCallback(client, userdata, message):
@@ -10,34 +12,52 @@ def customCallback(client, userdata, message):
     print("--------------\n\n")
 
 
-class aws:
+class awsMQTT:
     def __init__(self):
         with open("credentials/host.txt", "r") as f:
             self.host = f.read()
-        self.rootCAPath = "credentials/AmazonRootCA1.pem"
-        self.certificatePath = "credentials/fa825f2405-certificate.pem.crt"
-        self.privateKeyPath = "credentials/fa825f2405-private.pem.key"
+        self.rootCAPath = "credentials/rootca.pem"
+        self.certificatePath = "credentials/certificate.pem.crt"
+        self.privateKeyPath = "credentials/private.pem.key"
 
-        self.awsMQTT = AWSIoTMQTTClient("uniquePlaceholder")
-        self.awsMQTT.configureEndpoint(self.host, 3)
-        self.awsMQTT.configureCredentials(
+        self.MQTTClient = AWSIoTMQTTClient("uniquePlaceholder")
+        self.MQTTClient.configureEndpoint(self.host, 3)
+        self.MQTTClient.configureCredentials(
             self.rootCAPath, self.privateKeyPath, self.certificatePath
         )
 
         try:
-            self.awsMQTT.connect()
+            self.MQTTClient.connect()
         except FileNotFoundError as e:
             print(e)
         except:
             print("Unexpected error:", sys.exc_info()[0], sys.exc_info()[1])
 
     def publish(self, topic, payload, QoS):
-        self.awsMQTT.publish(topic, payload, QoS)
+        self.MQTTClient.publish(topic, payload, QoS)
 
     def subscribe(self, topic, QoS):
-        self.awsMQTT.subscribe(topic, QoS, customCallback)
+        self.MQTTClient.subscribe(topic, QoS, customCallback)
+
+
+class awsBoto3:
+    def __init__(self):
+        # initialize credentials and connection
+        credentialFilePath = "credentials/.aws/credentials"
+        self.AWSconfig = configparser.ConfigParser()
+        try:
+            self.AWSconfig.read(credentialFilePath)
+        except:
+            print("AWS credentials file not found at" + credentialFilePath)
+
+        self.session = boto3.Session(
+            aws_access_key_id=self.AWSconfig["default"]["aws_access_key_id"],
+            aws_secret_access_key=self.AWSconfig["default"]["aws_secret_access_key"],
+        )
 
 
 if __name__ == "__main__":
-    aws = aws()
-
+    # awsMQTT = awsMQTT()
+    awsBoto3 = awsBoto3()
+    print(awsBoto3.AWSconfig["default"]["aws_access_key_id"])
+    print(awsBoto3.AWSconfig["default"]["aws_secret_access_key"])
