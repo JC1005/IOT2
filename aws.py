@@ -1,5 +1,6 @@
 from AWSIoTPythonSDK.MQTTLib import AWSIoTMQTTClient
 import sys
+from pathlib import Path
 import boto3
 import configparser
 from boto3.dynamodb.conditions import Key, Attr
@@ -45,18 +46,23 @@ class awsBoto3:
     def __init__(self):
 
         # initialize credentials and connection
-        credentialFilePath = "credentials/.aws/credentials"
-        self.AWSconfig = configparser.ConfigParser()
-        try:
-            self.AWSconfig.read(credentialFilePath)
-        except:
-            print("AWS credentials file not found at" + credentialFilePath)
+        if Path("~/.aws/credentials").exists() is False:
+            credentialFilePath = "credentials/.aws/credentials"
+            self.AWSconfig = configparser.ConfigParser()
+            try:
+                self.AWSconfig.read(credentialFilePath)
+            except:
+                print("AWS credentials file not found at" + credentialFilePath)
 
-        self.session = boto3.Session(
-            aws_access_key_id=self.AWSconfig["default"]["aws_access_key_id"],
-            aws_secret_access_key=self.AWSconfig["default"]["aws_secret_access_key"],
-            aws_session_token=self.AWSconfig["default"]["aws_session_token"],
-        )
+            self.session = boto3.Session(
+                aws_access_key_id=self.AWSconfig["default"]["aws_access_key_id"],
+                aws_secret_access_key=self.AWSconfig["default"][
+                    "aws_secret_access_key"
+                ],
+                aws_session_token=self.AWSconfig["default"]["aws_session_token"],
+            )
+        else:
+            pass
 
 
 if __name__ == "__main__":
@@ -65,8 +71,8 @@ if __name__ == "__main__":
     print(awsBoto3.AWSconfig["default"]["aws_access_key_id"])
     print(awsBoto3.AWSconfig["default"]["aws_secret_access_key"])
     print(awsBoto3.AWSconfig["default"]["aws_session_token"])
-    table_name = "test"
-    index_name = "test"
+    table_name = "iotassign2"
+    index_name = "bookingid-datetime_value-index"
 
     dynamodb = awsBoto3.session.resource("dynamodb", "us-east-1")
     table = dynamodb.Table(table_name)
@@ -83,3 +89,4 @@ if __name__ == "__main__":
     n = 10  # limit to last 10 items
     data = items[:n]
     data_reversed = data[::-1]
+    print(data_reversed)
