@@ -27,7 +27,12 @@ class awsMQTT:
         self.MQTTClient.configureCredentials(
             self.rootCAPath, self.privateKeyPath, self.certificatePath
         )
-
+        self.MQTTClient.configureOfflinePublishQueueing(
+            -1
+        )  # Infinite offline Publish queueing
+        self.MQTTClient.configureDrainingFrequency(2)  # Draining: 2 Hz
+        self.MQTTClient.configureConnectDisconnectTimeout(10)  # 10 sec
+        self.MQTTClient.configureMQTTOperationTimeout(5)  # 5 sec
         try:
             self.MQTTClient.connect()
         except FileNotFoundError as e:

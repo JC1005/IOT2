@@ -72,27 +72,13 @@ if __name__ == "__main__":
         mygcc = GrabCarClient(host, port)
         aws = awsMQTT()
 
-        host = "a360v5qyx1qhmx-ats.iot.us-east-1.amazonaws.com"
-        rootCAPath = "credentials/rootca.pem"
-        certificatePath = "credentials/certificate.pem.crt"
-        privateKeyPath = "credentials/private.pem.key"
-
-        my_rpi = AWSIoTMQTTClient("basicPubSub")
-        my_rpi.configureEndpoint(host, 8883)
-        my_rpi.configureCredentials(rootCAPath, privateKeyPath, certificatePath)
-
-        my_rpi.configureOfflinePublishQueueing(-1)  # Infinite offline Publish queueing
-        my_rpi.configureDrainingFrequency(2)  # Draining: 2 Hz
-        my_rpi.configureConnectDisconnectTimeout(10)  # 10 sec
-        my_rpi.configureMQTTOperationTimeout(5)  # 5 sec
-
         # Connect and subscribe to AWS IoT
-        my_rpi.connect()
+        # my_rpi.connect()
 
         print("Streaming started")
         datetime_start = datetime.now()
 
-        gen = getData(mygcc, datetime_start, my_rpi)
+        gen = getData(mygcc, datetime_start, aws.MQTTClient)
 
         while True:
             next(gen)
